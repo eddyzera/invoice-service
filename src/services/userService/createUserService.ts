@@ -1,3 +1,4 @@
+import { UserAlreadyExistsError } from '@/errors/userAlreadyExistsError'
 import { IUserReposity } from '@/repository/userRepository/types'
 import { User } from '@prisma/client'
 import { hash } from 'bcryptjs'
@@ -24,7 +25,7 @@ export class CreateUserService {
     const isSameEmail = await this.userRepository.findByEmail(email)
 
     if (isSameEmail) {
-      throw new Error()
+      throw new UserAlreadyExistsError()
     }
 
     const user = await this.userRepository.create({
