@@ -12,3 +12,58 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  password_hash String
+  created_at    DateTime @default(now())
+
+  @@map("users")
+}
+
+enum PaymentsTermsType {
+  ONE_DAY
+  SEVEN_DAY
+  FOURTEEN_DAY
+  THIRTY_DAY
+}
+
+model Invoice {
+  id String @id @default(uuid())
+
+  billFromStreetAddress String @map("bill_from_street_address")
+  billFromCity          String @map("bill_from_city")
+  billFromPostCode      String @map("bill_from_post_code")
+  billFromCountry       String @map("bill_from_country")
+
+  billToCustomerName  String @map("bill_to_customer_name")
+  billToCustomerEmail String @map("bill_to_customer_email")
+  billToStreetAddress String @map("bill_to_street_address")
+  billToCity          String @map("bill_to_city")
+  billToPostCode      String @map("bill_to_post_code")
+  billToCountry       String @map("bill_to_country")
+
+  invoiceDate         DateTime          @map("invoice_date")
+  paymentsTerms       PaymentsTermsType @map("payments_terms")
+  projectDrescription String            @map("project_description")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  itemsList ItemsList[]
+
+  @@map("invoices")
+}
+
+model ItemsList {
+  id        String   @id @default(uuid())
+  itemName  String   @map("item_name")
+  quantity  Int
+  price     Decimal
+  Invoice   Invoice? @relation(fields: [invoiceId], references: [id])
+  invoiceId String?  @map("invoice_id")
+
+  @@map("item_list")
+}
