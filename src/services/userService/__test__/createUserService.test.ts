@@ -35,4 +35,22 @@ describe('CreateUserService', () => {
 
     expect(isPasswordCorrectlyHashed).toBe(true)
   })
+
+  it('should not register a new user with same email', async () => {
+    const email = 'john_doe@example.com'
+
+    await sut.execute({
+      name: 'john doe',
+      email,
+      password: '123johndoe',
+    })
+
+    await expect(() =>
+      sut.execute({
+        name: 'john doe',
+        email,
+        password: '123johndoe',
+      }),
+    ).rejects.toBeInstanceOf(Error)
+  })
 })

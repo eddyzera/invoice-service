@@ -21,6 +21,12 @@ export class CreateUserService {
     password,
   }: ICreateUserServiceRequest): Promise<ICreateUserServiceResponse> {
     const passwordHash = await hash(password, 6)
+    const isSameEmail = await this.userRepository.findByEmail(email)
+
+    if (!isSameEmail) {
+      throw new Error()
+    }
+
     const user = await this.userRepository.create({
       name,
       email,
