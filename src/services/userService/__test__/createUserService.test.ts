@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
+import { compare } from 'bcryptjs'
 import { CreateUserService } from '../createUserService'
 import { InMemoryUserRepository } from '@/test/inMemoryRepository/inMemoryUserRepository'
 
@@ -18,5 +19,20 @@ describe('CreateUserService', () => {
     })
 
     expect(user.id).toEqual(expect.any(String))
+  })
+
+  it('should hash user password upon registration', async () => {
+    const { user } = await sut.execute({
+      name: 'john doe',
+      email: 'john_doe@example.com',
+      password: '123johndoe',
+    })
+
+    const isPasswordCorrectlyHashed = await compare(
+      '123johndoe',
+      user.password_hash,
+    )
+
+    expect(isPasswordCorrectlyHashed).toBe(true)
   })
 })
