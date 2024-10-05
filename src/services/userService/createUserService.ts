@@ -23,7 +23,7 @@ export class CreateUserService {
     const passwordHash = await hash(password, 6)
     const isSameEmail = await this.userRepository.findByEmail(email)
 
-    if (!isSameEmail) {
+    if (isSameEmail) {
       throw new Error()
     }
 
