@@ -1,5 +1,6 @@
 import { IUserReposity } from '@/repository/userRepository/types'
 import { User } from '@prisma/client'
+import { hash } from 'bcryptjs'
 
 export interface ICreateUserServiceRequest {
   name: string
@@ -19,10 +20,11 @@ export class CreateUserService {
     email,
     password,
   }: ICreateUserServiceRequest): Promise<ICreateUserServiceResponse> {
+    const passwordHash = await hash(password, 6)
     const user = await this.userRepository.create({
       name,
       email,
-      password_hash: password,
+      password_hash: passwordHash,
     })
 
     return {
